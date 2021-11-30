@@ -1,7 +1,7 @@
 const strategy_services = require("../services/strategy_services");
 
 module.exports = class strategy_controllers{
-    static async apiSearchStrategies(req, res, next) {
+    static async searchStrategies(req, res, next) {
         const attributes = {
             c: false,
             i: false,
@@ -13,15 +13,15 @@ module.exports = class strategy_controllers{
         }
 
         if(req.query.attr != undefined){
-            var desired = [];
+            var attributes_array = [];
             if(!Array.isArray(req.query.attr)){
-                desired.push(req.query.attr);
+                attributes_array.push(req.query.attr);
             }
             else{
-                desired = req.query.attr;
+                attributes_array = req.query.attr;
             }
             
-            desired.forEach(attr => {
+            attributes_array.forEach(attr => {
                 if(attributes[attr] != undefined){
                     attributes[attr] = true;
                 }
@@ -29,10 +29,10 @@ module.exports = class strategy_controllers{
         }
 
         let name = "";
-        if(req.query.name === undefined){
-            
+        if(req.query.name != undefined){
+            name = req.query.name;
         }
         
-        res.send({estrategias: await strategy_services.getStrategiesFiltered(attributes)}).status(200);
+        res.send({estrategias: await strategy_services.getStrategiesFiltered(name, type, attributes)}).status(200);
     }
 };

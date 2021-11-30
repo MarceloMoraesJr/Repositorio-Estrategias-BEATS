@@ -1,7 +1,13 @@
 const express = require('express');
 const dbconfig = require('./dbconfig');
 
-dbconfig.db_connect();
+try{
+    dbconfig.db_connect();
+}
+catch(err){
+    console.log("ERROR: server couldn't connect to database");
+}
+
 const db_client = dbconfig.db_client;
 
 const PORT = 3000;

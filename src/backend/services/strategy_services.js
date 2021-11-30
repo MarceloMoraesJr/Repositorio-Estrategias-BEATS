@@ -29,7 +29,7 @@ module.exports = class strategy_services{
         }
     }
 
-    static async getStrategiesFiltered(name, attributes){
+    static async getStrategiesFiltered(name, type, attributes){
         let strategies = await this.getAllStrategies();
         
         strategies = strategies.filter(strategy => {
