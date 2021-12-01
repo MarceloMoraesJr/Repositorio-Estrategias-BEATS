@@ -1,0 +1,39 @@
+version: '3'
+services:
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+
+    ports:
+      - '5432:5432'
+    
+    network_mode: bridge
+
+    environment:
+      POSTGRES_USER: 'database_test'
+      POSTGRES_PASSWORD: 'database_password'
+      POSTGRES_DB: 'mvp_database'
+
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+      - ./pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+
+    depends_on: 
+      - postgres 
+
+    ports:
+      - '8080:80'
+    
+    network_mode: bridge
+
+    external_links:
+      - postgres:postgres
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'marcelo@email.com'
+      PGADMIN_DEFAULT_PASSWORD: 'senha'
