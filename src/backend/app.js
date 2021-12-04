@@ -1,20 +1,27 @@
+require('dotenv/config');
+
 const express = require('express');
 const dbconfig = require('./dbconfig');
 
-try{
-    dbconfig.db_connect();
-}
-catch(err){
-    console.log("ERROR: server couldn't connect to database");
-}
+dbconfig.db_connect();
 
 const db_client = dbconfig.db_client;
 
-const PORT = 3000;
+process.on('exit', (code) => {
+    console.log(`SERVER: exiting with code: ${code}`);
+    db_client.end();
+});
+
+process.on('SIGINT', (code) => {
+    console.log(`SERVER: stopping`);
+    process.exit(0);
+});
+
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.listen(PORT, ()=>{
-    console.log(`listening... on ${PORT}`);
+    console.log(`SERVER: listening... on ${PORT}`);
 });
 
 app.use(express.json());

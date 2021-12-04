@@ -1,16 +1,13 @@
 const { Client } = require("pg")
 
-const db_client = new Client({
-    user: 'database_test',
-    host: '172.23.118.129',
-    database: 'mvp_database',
-    password: 'database_password',
-    port: 5432,
-});
+const db_client = new Client();
 
-function db_connect(){
-    db_client.connect((err) => {
-        if(err) throw err;
+async function db_connect(){
+    await db_client.connect((err) => {
+        if(err){
+            console.log('FATAL ERROR: Unable to connect to database');
+            process.exit(1);
+        }
         console.log("Database connected!");
     });
 }
