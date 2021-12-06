@@ -2,9 +2,10 @@ const { Client } = require("pg")
 
 const db_client = new Client();
 
-async function db_connect(){
-    await db_client.connect((err) => {
+function db_connect(){
+    db_client.connect((err) => {
         if(err){
+            console.log(err);
             console.log('FATAL ERROR: Unable to connect to database');
             process.exit(1);
         }

@@ -14,18 +14,18 @@ process.on('exit', (code) => {
 
 process.on('SIGINT', (code) => {
     console.log(`SERVER: stopping`);
+    db_client.end();
     process.exit(0);
 });
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-app.listen(PORT, ()=>{
-    console.log(`SERVER: listening... on ${PORT}`);
+app.listen(PORT, () => {
+    console.log(`SERVER: listening on ${PORT}`);
 });
 
 app.use(express.json());
 
 const strategy_router = require('./routes/strategy_routes');
-
 app.use(strategy_router);
