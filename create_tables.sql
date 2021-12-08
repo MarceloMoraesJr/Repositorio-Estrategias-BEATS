@@ -25,7 +25,7 @@ CREATE TABLE estrategia_arquitetural(
     Acc BOOLEAN NOT NULL DEFAULT FALSE,         /*Accountability*/
     NR BOOLEAN NOT NULL DEFAULT FALSE,          /*Non-repudiation*/
 
-    username_criador VARCHAR (50), 
+    username_criador VARCHAR (50) NOT NULL, 
     FOREIGN KEY (username_criador)
         REFERENCES usuario (username) ON DELETE CASCADE,
 
@@ -37,7 +37,7 @@ CREATE TABLE estrategia_arquitetural(
 
 /*===SINONIMO_ESTRATEGIA===*/
 CREATE TABLE sinonimo_estrategia(
-    estrategia VARCHAR (100),
+    estrategia VARCHAR (100) NOT NULL,
     FOREIGN KEY (estrategia)
         REFERENCES estrategia_arquitetural (nome) ON DELETE CASCADE,
     
@@ -49,56 +49,58 @@ CREATE TABLE sinonimo_estrategia(
 
 /*===EDICAO===*/
 CREATE TABLE edicao(
-    administrador VARCHAR (50),
+    administrador VARCHAR (50) NOT NULL,
     FOREIGN KEY (administrador)
         REFERENCES usuario (username) ON DELETE CASCADE,
     
-    estrategia VARCHAR (100),
+    estrategia VARCHAR (100) NOT NULL,
     FOREIGN KEY (estrategia)
         REFERENCES estrategia_arquitetural (nome) ON DELETE CASCADE,
 
     data_edicao TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (administrador, estrategia, data_edicao)
+    UNIQUE (administrador, estrategia, data_edicao),
+    
+    id UUID PRIMARY KEY DEFAULT UUID_GENERATE_V4() 
 );
 
 
 /*===COMENTARIO===*/
 CREATE TABLE comentario(
-    username VARCHAR (50),
+    username VARCHAR (50) NOT NULL,
     FOREIGN KEY (username)
         REFERENCES usuario (username) ON DELETE CASCADE,
     
-    estrategia VARCHAR (100),
+    estrategia VARCHAR (100) NOT NULL,
     FOREIGN KEY (estrategia)
         REFERENCES estrategia_arquitetural (nome) ON DELETE CASCADE,
 
     data_comentario TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (username, estrategia, data_comentario),
+    UNIQUE (username, estrategia, data_comentario),
+    
+    id UUID PRIMARY KEY DEFAULT UUID_GENERATE_V4(),
 
     texto VARCHAR (280),
 
-    username_base VARCHAR (50),
-    estrategia_base VARCHAR (100),
-    data_base TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (username_base, estrategia_base, data_base)
-        REFERENCES comentario (username, estrategia, data_comentario)
+    comentario_base UUID,
+    FOREIGN KEY (comentario_base)
+        REFERENCES comentario (id)
 );
 
 
 /*===SOLICITACAO===*/
 CREATE TABLE solicitacao(
-    username VARCHAR (50),
+    username VARCHAR (50) NOT NULL,
     FOREIGN KEY (username)
         REFERENCES usuario (username) ON DELETE CASCADE,
 
     data_solicitacao TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (username, data_solicitacao),
+    UNIQUE (username, data_solicitacao),
 
     tipo_solicitacao SMALLINT NOT NULL,                                 /*0: edicao, 1:adicao*/
-    nro_protocolo UUID UNIQUE NOT NULL DEFAULT UUID_GENERATE_V4(),
+    nro_protocolo UUID PRIMARY KEY DEFAULT UUID_GENERATE_V4(),
     estado SMALLINT NOT NULL DEFAULT 0,                                 /*0 (Comum): voto administrador pendente*/
 
     administrador VARCHAR (50),
@@ -117,14 +119,13 @@ CREATE TABLE solicitacao(
 
 /*===VOTACAO_CONSELHO===*/
 CREATE TABLE votacao_conselho(
-    username_solicitacao VARCHAR(50),
-    data_solicitacao TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (username_solicitacao, data_solicitacao)
-        REFERENCES solicitacao (username, data_solicitacao) ON DELETE CASCADE,
+    nro_protocolo_solicitacao UUID,
+    FOREIGN KEY (nro_protocolo_solicitacao)
+        REFERENCES solicitacao (nro_protocolo) ON DELETE CASCADE,
     
     nro_recorrencia SMALLINT NOT NULL DEFAULT 1,
 
-    PRIMARY KEY (username_solicitacao, data_solicitacao, nro_recorrencia),
+    PRIMARY KEY (nro_protocolo_solicitacao, nro_recorrencia),
     
     nro_aceitar SMALLINT NOT NULL DEFAULT 0,
     nro_aceitar_com_sugestoes SMALLINT NOT NULL DEFAULT 0,
@@ -136,17 +137,16 @@ CREATE TABLE votacao_conselho(
 
 /*===VOTO===*/
 CREATE TABLE voto(
-    username_solicitacao VARCHAR (50),
-    data_solicitacao TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    nro_protocolo_solicitacao UUID NOT NULL,
     nro_recorrencia SMALLINT NOT NULL DEFAULT 0,
-    FOREIGN KEY (username_solicitacao, data_solicitacao, nro_recorrencia)
-        REFERENCES votacao_conselho (username_solicitacao, data_solicitacao, nro_recorrencia),
+    FOREIGN KEY (nro_protocolo_solicitacao, nro_recorrencia)
+        REFERENCES votacao_conselho (nro_protocolo_solicitacao, nro_recorrencia),
     
-    membro_conselho VARCHAR (50),
+    membro_conselho VARCHAR (50) NOT NULL,
     FOREIGN KEY (membro_conselho)
         REFERENCES usuario (username) ON DELETE CASCADE,
 
-    PRIMARY KEY (username_solicitacao, data_solicitacao, nro_recorrencia, membro_conselho),
+    PRIMARY KEY (nro_protocolo_solicitacao, nro_recorrencia, membro_conselho),
 
     voto_opcao SMALLINT NOT NULL   /*0: aceitar, 1: aceitar com sugestoes, 2: rejeitar*/
 );

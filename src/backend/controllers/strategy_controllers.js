@@ -70,6 +70,21 @@ module.exports = class strategy_controllers{
 
     static async getStrategy(req, res, next){
         const name = req.params.name;
-        res.status(200).send({name});
+        let strategy = await strategy_services.getStrategyByName(name);
+
+        if(!strategy){
+            return res.status(404).send({error_message: `strategy '${name}' does not exist`});
+        }
+
+        const aliases = await strategy_services.getStrategyAliases(name);
+        strategy.aliases = aliases;
+
+        const documentation = await strategy_services.getStrategyDocumentation(strategy.documentation_path);
+        
+        strategy = {...strategy, ...documentation};
+        delete strategy.documentation_path;
+        delete strategy.images_path;
+
+        return res.status(200).send(strategy);
     }
 };

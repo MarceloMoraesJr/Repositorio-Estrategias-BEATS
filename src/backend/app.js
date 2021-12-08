@@ -29,3 +29,6 @@ app.use(express.json());
 
 const strategy_router = require('./routes/strategy_routes');
 app.use(strategy_router);
+
+const comment_router = require('./routes/comment_routes');
+app.use(comment_router);
