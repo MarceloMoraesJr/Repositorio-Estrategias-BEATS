@@ -32,3 +32,6 @@ app.use(strategy_router);
 
 const comment_router = require('./routes/comment_routes');
 app.use(comment_router);
+
+const user_router = require('./routes/user_routes');
+app.use(user_router);

@@ -10,7 +10,7 @@ module.exports = class comment_services{
             FROM comentario b\
             LEFT JOIN comentario r ON b.id = r.comentario_base\
             WHERE b.estrategia = $1 AND b.comentario_base IS NULL\
-			ORDER BY base_date";
+			ORDER BY base_date, reply_date";
 
             const values = [strategy_name];
             const db_comments = await db_client.query(text, values);
@@ -67,11 +67,11 @@ module.exports = class comment_services{
 
             const db_comment = await db_client.query(text, values);
 
-            if(db_comment.rowCount > 0){
-                return db_comment.rows[0];
+            if(db_comment.rowCount === 0){
+                return null;
             }
-
-            return null;
+            
+            return db_comment.rows[0];
         }
         catch(err){
             console.log(err);
@@ -103,7 +103,8 @@ module.exports = class comment_services{
     static async commentStrategy(strategy_name, author, comment_text){
         try{
             const text = "INSERT INTO comentario (username, estrategia, texto)\
-            VALUES ($1, $2, $3) RETURNING *";
+            VALUES ($1, $2, $3)\
+            RETURNING id, estrategia AS strategy, username AS author, data_comentario AS date, texto AS text";
             const values = [author, strategy_name, comment_text];
             
             const rowInserted = await db_client.query(text, values);
@@ -120,7 +121,8 @@ module.exports = class comment_services{
     static async replyCommentStrategy(strategy_name, comment_base_id, author, reply_text){
         try{
             const text = "INSERT INTO comentario (username, estrategia, texto, comentario_base)\
-            VALUES ($1, $2, $3, $4) RETURNING *";
+            VALUES ($1, $2, $3, $4)\
+            RETURNING id, estrategia AS strategy, username AS author, data_comentario AS date, texto AS text, comentario_base AS base_comment";
             const values = [author, strategy_name, reply_text, comment_base_id];
 
             const rowInserted = await db_client.query(text, values);
@@ -143,6 +145,25 @@ module.exports = class comment_services{
             const db_comment = await db_client.query(text, values);
 
             return db_comment.rowCount > 0;
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+
+
+    static async deleteCommentById(id){
+        try{
+            const text = "DELETE FROM comentario\
+            WHERE id = $1\
+            RETURNING id, username AS author, estrategia AS strategy,\
+            data_comentario AS date, texto AS text, comentario_base AS base_comment";
+            const values = [id];
+
+            const rowRemoved = await db_client.query(text, values);
+
+            return rowRemoved.rows[0];
         }
         catch(err){
             console.log(err);
