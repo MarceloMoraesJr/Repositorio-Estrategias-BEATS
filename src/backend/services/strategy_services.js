@@ -31,9 +31,10 @@ function fuzzySearchStrategiesName(strategies, name){
 module.exports = class strategy_services{
     static async getAllStrategies(){
         try{
-            const text = "SELECT ea.nome AS name, ea.tipo AS type, ea.c, ea.i, ea.a, ea.authn, ea.authz, ea.acc, ea.nr, s.sinonimo AS aliases\
-                                FROM estrategia_arquitetural ea\
-                                LEFT JOIN sinonimo_estrategia s ON ea.nome = s.estrategia";
+            const text = "SELECT ea.nome AS name, ea.tipo AS type,\
+            ea.c, ea.i, ea.a, ea.authn, ea.authz, ea.acc, ea.nr, s.sinonimo AS aliases\
+            FROM estrategia_arquitetural ea\
+            LEFT JOIN sinonimo_estrategia s ON ea.nome = s.estrategia";
 
             const db_strategies = await db_client.query(text);
             
@@ -84,9 +85,9 @@ module.exports = class strategy_services{
     static async getStrategyAliases(name){
         try{
             const text = "SELECT s.sinonimo AS alias\
-                            FROM estrategia_arquitetural ea\
-                            JOIN sinonimo_estrategia s ON ea.nome = s.estrategia\
-                            WHERE ea.nome = $1;"
+            FROM estrategia_arquitetural ea\
+            JOIN sinonimo_estrategia s ON ea.nome = s.estrategia\
+            WHERE ea.nome = $1;"
             const values = [name];
 
             const db_aliases = await db_client.query(text, values);
@@ -102,14 +103,14 @@ module.exports = class strategy_services{
 
     static async getStrategyByName(name){
         try{
-            const text = "SELECT ea.nome AS name, ea.tipo AS type, ea.c, ea.i, ea.a, ea.authn, ea.authz, ea.acc, ea.nr,\
-                          ea.username_criador AS username_creator,\
-                          ea.data_publicacao AS publish_date,\
-                          ea.caminho_documentacao AS documentation_path,\
-                          ea.caminho_imagens AS images_path\
-                            FROM estrategia_arquitetural ea\
-                            WHERE ea.nome = $1;"
-
+            const text = "SELECT ea.nome AS name, ea.tipo AS type,\
+            ea.c, ea.i, ea.a, ea.authn, ea.authz, ea.acc, ea.nr,\
+            ea.username_criador AS username_creator,\
+            ea.data_publicacao AS publish_date,\
+            ea.caminho_documentacao AS documentation_path,\
+            ea.caminho_imagens AS images_path\
+            FROM estrategia_arquitetural ea\
+            WHERE ea.nome = $1;"
             const values = [name];
 
             const db_strategies = await db_client.query(text, values);
@@ -143,9 +144,8 @@ module.exports = class strategy_services{
 
     static async strategyExists(name){
         const text = "SELECT ea.nome\
-                        FROM estrategia_arquitetural ea\
-                        WHERE ea.nome = $1;"
-
+        FROM estrategia_arquitetural ea\
+        WHERE ea.nome = $1;"
         const values = [name];
 
         const db_strategies = await db_client.query(text, values);

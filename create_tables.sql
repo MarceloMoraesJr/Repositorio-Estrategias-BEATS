@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE usuario(
     username VARCHAR (50) PRIMARY KEY,
     email VARCHAR (100) UNIQUE NOT NULL,
-    senha CHAR (12) NOT NULL,
+    senha VARCHAR (100) NOT NULL,
     perfil_github VARCHAR (100) UNIQUE NOT NULL,
     data_ingresso TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     tipo_usuario SMALLINT NOT NULL DEFAULT 0,                                   /*0: Usuario Comum, 1: Membro Conselho, 2: Administrador*/
@@ -85,7 +85,7 @@ CREATE TABLE comentario(
 
     comentario_base UUID,
     FOREIGN KEY (comentario_base)
-        REFERENCES comentario (id)
+        REFERENCES comentario (id) ON DELETE CASCADE
 );
 
 

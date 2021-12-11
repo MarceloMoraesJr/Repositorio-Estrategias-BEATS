@@ -63,7 +63,12 @@ module.exports = class strategy_controllers{
             }
         }
         
-        return res.status(200).send({strategies: await strategy_services.getStrategiesFiltered(name, type, attributes)});
+        const strategies = await strategy_services.getStrategiesFiltered(name, type, attributes);
+        strategies.forEach((strategy) => {
+            strategy.type = ['Pattern', 'Tactic'][strategy.type];
+        });
+
+        return res.status(200).send({strategies});
     }
 
     
@@ -84,6 +89,7 @@ module.exports = class strategy_controllers{
         strategy = {...strategy, ...documentation};
         delete strategy.documentation_path;
         delete strategy.images_path;
+        strategy.type = ['Pattern', 'Tactic'][strategy.type];
 
         return res.status(200).send(strategy);
     }
