@@ -35,3 +35,6 @@ app.use(comment_router);
 
 const user_router = require('./routes/user_routes');
 app.use(user_router);
+
+const request_router = require('./routes/request_routes');
+app.use(request_router);

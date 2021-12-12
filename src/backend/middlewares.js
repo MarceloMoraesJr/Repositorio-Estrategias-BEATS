@@ -22,6 +22,7 @@ function assertBodyFields(body_fields){
 }
 
 
+
 function authorizeUser(allowed_user_types){
     return function (req, res, next){
         if(!req.headers.authorization){
@@ -41,7 +42,31 @@ function authorizeUser(allowed_user_types){
     }   
 }
 
+
+
+function preprocessAddRequestForm(req, res, next){
+    const infosec_attributes = ['c', 'i', 'a', 'authn', 'authz', 'acc', 'nr'];
+
+    for(let attr of infosec_attributes){
+        const bool_string = req.body[attr].toUpperCase();
+        if(bool_string === "TRUE" || bool_string === "FALSE"){
+            req.body[attr] = bool_string === "TRUE";
+        }
+        else{
+            return res.status(400).send({error_message: 'infosec attributes must be written as an boolean'});
+        }
+    }
+
+    req.body.aliases = JSON.parse(req.body.aliases);
+    if(!Array.isArray(req.body.aliases)){
+        return res.status(400).send({error_message: 'aliases must be written as an array'});
+    }
+
+    next();
+}
+
 module.exports = {
     assertBodyFields,
-    authorizeUser
+    authorizeUser,
+    preprocessAddRequestForm
 };
