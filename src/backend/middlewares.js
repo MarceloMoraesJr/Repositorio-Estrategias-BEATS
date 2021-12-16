@@ -68,5 +68,5 @@ function preprocessAddRequestForm(req, res, next){
 module.exports = {
     assertBodyFields,
     authorizeUser,
-    preprocessAddRequestForm
+    preprocessAddRequestForm,
 };

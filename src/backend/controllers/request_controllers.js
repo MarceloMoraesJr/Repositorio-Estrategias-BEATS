@@ -10,8 +10,7 @@ const request_state_descriptions = [
     [   //Add Request
         "Waiting for Administrator Approval",
         "Rejected by Administrator",
-        "Approved by Administrator",
-        "Council voting ongoing",
+        "Approved by Administrator. Council voting ongoing",
         "Review suggested by Council",
         "Approved by Council. Published",
         "Rejected by Council",

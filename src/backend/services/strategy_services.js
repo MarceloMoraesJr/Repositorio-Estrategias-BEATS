@@ -143,13 +143,28 @@ module.exports = class strategy_services{
 
 
     static async strategyExists(name){
-        const text = "SELECT ea.nome\
-        FROM estrategia_arquitetural ea\
-        WHERE ea.nome = $1;"
-        const values = [name];
+        try{
+            const text = "SELECT ea.nome\
+            FROM estrategia_arquitetural ea\
+            WHERE ea.nome = $1;"
+            const values = [name];
 
-        const db_strategies = await db_client.query(text, values);
+            const db_strategies = await db_client.query(text, values);
+            return db_strategies.rowCount > 0;
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
 
-        return db_strategies.rowCount > 0;
+
+
+    static async getStrategyImagesNames(images_path){
+        try{
+            return await fs.readdir(process.env.PATH_DOCUMENTATION + images_path);
+        }
+        catch(err){
+            console.log(err);
+        }
     }
 };

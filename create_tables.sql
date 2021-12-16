@@ -140,7 +140,7 @@ CREATE TABLE voto(
     nro_protocolo_solicitacao UUID NOT NULL,
     nro_recorrencia SMALLINT NOT NULL DEFAULT 0,
     FOREIGN KEY (nro_protocolo_solicitacao, nro_recorrencia)
-        REFERENCES votacao_conselho (nro_protocolo_solicitacao, nro_recorrencia),
+        REFERENCES votacao_conselho (nro_protocolo_solicitacao, nro_recorrencia) ON DELETE CASCADE,
     
     membro_conselho VARCHAR (50) NOT NULL,
     FOREIGN KEY (membro_conselho)

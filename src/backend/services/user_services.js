@@ -44,4 +44,18 @@ module.exports = class profile_services{
             console.log(err);
         }
     }
+
+
+
+    static async getNumberCouncilMembers(){
+        try{
+            const text = "SELECT COUNT(*) AS number_council_members FROM usuario WHERE tipo_usuario = 1";
+            const db_council_members_number = await db_client.query(text);
+
+            return db_council_members_number.rows[0].number_council_members;
+        }
+        catch(err){
+            console.log(err);    
+        }
+    }
 }

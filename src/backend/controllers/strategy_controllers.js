@@ -93,4 +93,38 @@ module.exports = class strategy_controllers{
 
         return res.status(200).send(strategy);
     }
+
+
+
+    static async listStrategyImagesName(req, res, next){
+        const name = req.params.name;
+        
+        const strategy = await strategy_services.getStrategyByName(name);
+        if(!strategy){
+            return res.status(404).send({error_message: `strategy '${name}' does not exist`});
+        }
+
+        const imgs = await strategy_services.getStrategyImagesNames(strategy.images_path);
+
+        return res.status(200).send({images_name: imgs});
+    }
+
+
+
+    static async getStrategyImageByName(req, res, next){
+        const name = req.params.name;
+        const image_name = req.params.imagename;
+
+        const strategy = await strategy_services.getStrategyByName(name);
+        if(!strategy){
+            return res.status(404).send({error_message: `strategy '${name}' does not exist`});
+        }
+
+        const imgs = await strategy_services.getStrategyImagesNames(strategy.images_path);
+        if(!imgs.includes(image_name)){
+            return res.status(404).send({error_message: `strategy does not have image '${image_name}'`});
+        }
+
+        return res.status(200).sendFile('./public/strategies documentation/' + strategy.images_path + image_name, {root: '.'});
+    }
 };
