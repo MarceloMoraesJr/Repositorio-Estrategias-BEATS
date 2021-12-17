@@ -33,7 +33,7 @@ const multi_upload = multer({storage}).array('images', 10);
 
 
 
-router.get('/requests/addition', middlewares.authorizeUser([0, 1]));
+router.get('/requests/', middlewares.authorizeUser([0, 1]), request_controller.followRequestsStatus);
 
 router.post('/requests/addition', middlewares.authorizeUser([0, 1]),
             request_controller.postAddRequestInsertDB,

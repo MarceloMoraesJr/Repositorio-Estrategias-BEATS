@@ -169,4 +169,22 @@ module.exports = class comment_services{
             console.log(err);
         }
     }
+
+
+
+    static async updateCommentText(id, new_text){
+        try{
+            const text = "UPDATE comentario SET texto = $1 WHERE id = $2\
+            RETURNING id, username AS author, estrategia AS strategy,\
+            data_comentario AS date, texto AS text, comentario_base AS base_comment";
+            const values = [new_text, id];
+
+            const db_comment_updated = await db_client.query(text, values);
+
+            return db_comment_updated.rows[0];
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
 }

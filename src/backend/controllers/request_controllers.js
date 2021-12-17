@@ -11,8 +11,8 @@ const request_state_descriptions = [
         "Waiting for Administrator Approval",
         "Rejected by Administrator",
         "Approved by Administrator. Council voting ongoing",
-        "Review suggested by Council",
         "Approved by Council. Published",
+        "Review suggested by Council",
         "Rejected by Council",
         "Excluded by User"
     ]
@@ -56,5 +56,14 @@ module.exports = class request_controllers{
             state_description: request_state_descriptions[1][0],
             proposed_strategy
         });
+    }
+
+
+
+    static async followRequestsStatus(req, res, next){
+        const username = req.user_info.username;
+        let requests = await request_services.getRequestsByUser(username);
+
+        res.status(200).send({requests});
     }
 }

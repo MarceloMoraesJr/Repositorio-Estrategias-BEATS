@@ -36,6 +36,7 @@ app.listen(PORT, () => {
 app.use(cors());
 app.use(express.json());
 app.options('*', cors());
+app.disable('etag');
 
 const strategy_router = require('./routes/strategy_routes');
 app.use(strategy_router);

@@ -53,4 +53,38 @@ module.exports = class request_services{
             console.log(err);
         }
     }
+
+
+
+    static async updateRequestState(request_protocol_number){
+        try{
+            const text = "UPDATE solicitacao SET estado = 3 WHERE nro_protocolo = $1";
+            const values = [request_protocol_number];
+
+            const db_request = await db_client.query(text, values);
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+
+
+    static async getRequestsByUser(username){
+        try{
+            const text = "SELECT nro_protocolo AS protocol_number, tipo_solicitacao AS type, estado AS state,\
+            texto_rejeicao AS rejection_text, estrategia_referente AS relating_strategy, nro_recorrencia AS recurrence_number,\
+            nro_aceitar AS accept_count, nro_aceitar_com_sugestoes AS accept_with_suggestions_count, nro_rejeitar AS reject_count\
+            FROM solicitacao LEFT JOIN votacao_conselho ON nro_protocolo = nro_protocolo_solicitacao\
+            WHERE username = $1";
+            const values = [username];
+
+            const db_requests = await db_client.query(text, values);
+
+            return db_requests.rows;
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
 }

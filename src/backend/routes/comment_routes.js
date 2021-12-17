@@ -15,4 +15,7 @@ router.post('/strategies/:name/comments/:id', middlewares.assertBodyFields(['tex
 router.delete('/strategies/:name/comments/:id', middlewares.authorizeUser([0, 1, 2]),
               comment_controller.deleteComment);
 
+router.put('/strategies/:name/comments/:id', middlewares.authorizeUser([0, 1, 2]),
+           middlewares.assertBodyFields(['text']), comment_controller.editComment);
+
 module.exports = router;

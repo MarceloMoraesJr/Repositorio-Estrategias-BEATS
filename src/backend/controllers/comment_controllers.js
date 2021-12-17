@@ -120,4 +120,33 @@ module.exports = class comment_controllers{
 
         return res.status(200).send({message: 'success: comment deleted', comment: comment_deleted});
     }
+
+
+
+    static async editComment(req, res, next){
+        const strategy_name = req.params.name;
+        const comment_id = req.params.id;
+        const user = req.user_info;
+        
+        const regex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+        if(!regex.test(comment_id)){
+            return res.status(400).send({error_message: 'comment id is not in UUID format'});
+        }
+
+        if(!await strategy_services.strategyExists(strategy_name)){
+            return res.status(404).send({error_message: `strategy '${strategy_name}' does not exist`});
+        }
+
+        const comment = await comment_services.getCommentById(strategy_name, comment_id);
+        if(!comment){
+            return res.status(404).send({error_message: 'comment does not exist'});
+        }
+
+        if(user.username != comment.author){
+            return res.status(403).send({error_message: "not allowed to edit another user's comment"});
+        }
+
+        const comment_edited = await comment_services.updateCommentText(comment_id, req.body.text);
+        return res.status(200).send({message: 'success: comment updated', comment_edited})
+    }
 }
